@@ -1,0 +1,13 @@
+{
+  "name": "inmemtrad",
+  "version": "1.0.0",
+  "description": "Random generator of orders to Redis DB.",
+  "repository": "https://github.com/do-team/inmemtrad",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "aws-sdk": "2.3.11"
+  }
+}
