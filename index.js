@@ -11,7 +11,15 @@ client.on("error", function (err) {
 });
 
 // testing function
-client.set("zkouska", "hodnota");
+var randomNo = () => Math.floor(Number.MAX_SAFE_INTEGER * Math.random());
+console.log(randomNo);
+client.set("zkouska", "BEZ HODNOTY");
+client.get("zkouska", function(err, reply) {
+     console.log(reply);
+     });
+
+
+
 // end of test
 
 client.set("string key", "string val", redis.print);
