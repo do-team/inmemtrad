@@ -8,6 +8,8 @@
     "start": "node index.js"
   },
   "dependencies": {
-    "aws-sdk": "2.3.11"
+    "aws-sdk": "2.3.11",
+    "crypto": "0.0.3",
+    "biguint-format": "1.0.0"
   }
 }
