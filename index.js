@@ -3,9 +3,9 @@ var crypto = require("crypto");
 var biguint = require('biguint-format');
 
 var redis = require("redis"),
-    //client = redis.createClient(); //when running on localhost
+    client = redis.createClient(); //when running on localhost
     //client = redis.createClient('/tmp/redis.sock'); //when running on local unix socket (fastest possible)
-    client = redis.createClient(6379,'35.156.118.89'); //when running remotely
+    //client = redis.createClient(6379,'35.156.118.89'); //when running remotely
 // if you'd like to select database 3, instead of 0 (default), call
 // client.select(3, function() { /* ... */ });
 
