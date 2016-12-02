@@ -11,6 +11,6 @@ COPY . /usr/src/inmemtrad
 
 RUN npm install
 
-EXPOSE /tmp/redis.sock
+EXPOSE 50000
 
 CMD ["npm", "start"]
