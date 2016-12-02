@@ -18,9 +18,10 @@ client.on("error", function (err) {
 function randomPrice (qty) {
     return crypto.randomBytes(qty);
 }
-console.log(biguint(randomPrice(1), 'dec'));
+var rndPrc = biguint(randomPrice(1), 'dec');
+console.log(rndPrc);
 
-client.set("zkouska", "BEZ HODNOTY");
+client.set("zkouska", rndPrc);
 client.get("zkouska", function(err, reply) {
      console.log(reply);
      });
