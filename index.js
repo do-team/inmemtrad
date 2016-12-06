@@ -45,7 +45,7 @@ function orderGenerator(cycles, callback) {
             client.lrange(redisKey, 0, 0, function(err, reply) {
                 if (reply.length == 0) {
                     client.rpush(redisKey, randomCustomer);
-                    console.log("New order inserted! " + redisKey, +" " + randomCustomer)
+                    console.log("New order inserted! " + redisKey +" " + randomCustomer)
                 } else {
                     console.log("TRADE DETECTED! " + randomCustomer + " just bought " + redisKey + ", best offer by: " + reply + ". Removing from orderbook.");
                     client.lpop(redisKey)
@@ -59,7 +59,7 @@ function orderGenerator(cycles, callback) {
             client.lrange(redisKey, 0, 0, function(err, reply) {
                 if (reply.length == 0) {
                     client.rpush(redisKey, randomCustomer);
-                    console.log("New order inserted! " + redisKey, +" " + randomCustomer)
+                    console.log("New order inserted! " + redisKey +" " + randomCustomer)
                 } else {
                     console.log("TRADE DETECTED! " + randomCustomer + " just sold " + redisKey + ", best offer by: " + reply + ". Removing from orderbook.");
                     client.lpop(redisKey)
@@ -72,7 +72,7 @@ function orderGenerator(cycles, callback) {
 
 // Main loop generating random orders
 
-for (var cycles = 0; cycles < 1000; cycles++) {
+for (var cycles = 0; cycles < 10; cycles++) {
     orderGenerator(cycles, function(response) {
         console.log("cycles = " + this.cycles + " , response = " + response);
     }.bind({
