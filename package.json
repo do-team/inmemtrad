@@ -1,6 +1,7 @@
 {
   "name": "inmemtrad",
   "version": "1.0.0",
+  "license": "GPL-3.0",
   "description": "Random generator of orders to Redis DB.",
   "repository": "https://github.com/do-team/inmemtrad",
   "main": "index.js",
@@ -9,7 +10,6 @@
   },
   "dependencies": {
     "aws-sdk": "2.3.11",
-    "redis": "2.6.3",
-    "async": "2.1.4"
+    "redis": "2.6.3"
   }
 }

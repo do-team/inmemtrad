@@ -1,5 +1,4 @@
 var redis = require("redis");
-var async = require("async");
 var connection = process.env.IMTCONNECT;
 
 switch (connection) {
@@ -44,13 +43,11 @@ function dummy(cycles, callback) {
         case "buy":
             var redisKey = randomProduct + "-" + randomPrice + "-sell";
             client.lrange(redisKey, 0, 0, function(err, reply) {
-
-                //console.log(reply.length + "here");
                 if (reply.length === 0) {
                     client.rpush(redisKey, randomCustomer);
                     console.log("New order inserted! " + redisKey, +" " + randomCustomer)
                 } else {
-                    console.log("TRADE DETECTED! " + randomCustomer + " just traded " + redisKey + ", best offer by: " + reply + ". Removing from orderbook.");
+                    console.log("TRADE DETECTED! " + randomCustomer + " just bought " + redisKey + ", best offer by: " + reply + ". Removing from orderbook.");
                     client.lpop(redisKey)
                 }
 
@@ -60,13 +57,11 @@ function dummy(cycles, callback) {
         case "sell":
             var redisKey = randomProduct + "-" + randomPrice + "-buy";
             client.lrange(redisKey, 0, 0, function(err, reply) {
-
-                //console.log(reply.length + "here");
                 if (reply.length === 0) {
                     client.rpush(redisKey, randomCustomer);
                     console.log("New order inserted! " + redisKey, +" " + randomCustomer)
                 } else {
-                    console.log("TRADE DETECTED! " + randomCustomer + " just traded " + redisKey + ", best offer by: " + reply + ". Removing from orderbook.");
+                    console.log("TRADE DETECTED! " + randomCustomer + " just sold " + redisKey + ", best offer by: " + reply + ". Removing from orderbook.");
                     client.lpop(redisKey)
                 }
 
