@@ -4,7 +4,7 @@ FROM alpine:3.3
 RUN apk add --update nodejs
 RUN mkdir -p /usr/src/inmemtrad
 WORKDIR /usr/src/inmemtrad
-
+ENV IMTCONNECT=INTERNET
 # Install app
 COPY package.json /usr/src/inmemtrad
 COPY . /usr/src/inmemtrad
