@@ -29,10 +29,10 @@ var ordertypes = Array("buy", "sell");
 
 // Main function
 
-function dummy(cycles, callback) {
+function orderGenerator(cycles, callback) {
 
     // Randomiser
-    var randomPrice = Math.floor((Math.random() * 299) + 1);
+    var randomPrice = Math.floor((Math.random() * 98) + 1);
     var randomProduct = products[Math.floor(Math.random() * products.length)];
     var randomCustomer = customers[Math.floor(Math.random() * customers.length)];
     var randomOrderType = ordertypes[Math.floor(Math.random() * ordertypes.length)];
@@ -43,7 +43,7 @@ function dummy(cycles, callback) {
         case "buy":
             var redisKey = randomProduct + "-" + randomPrice + "-sell";
             client.lrange(redisKey, 0, 0, function(err, reply) {
-                if (reply.length === 0) {
+                if (reply.length == 0) {
                     client.rpush(redisKey, randomCustomer);
                     console.log("New order inserted! " + redisKey, +" " + randomCustomer)
                 } else {
@@ -57,7 +57,7 @@ function dummy(cycles, callback) {
         case "sell":
             var redisKey = randomProduct + "-" + randomPrice + "-buy";
             client.lrange(redisKey, 0, 0, function(err, reply) {
-                if (reply.length === 0) {
+                if (reply.length == 0) {
                     client.rpush(redisKey, randomCustomer);
                     console.log("New order inserted! " + redisKey, +" " + randomCustomer)
                 } else {
@@ -73,7 +73,7 @@ function dummy(cycles, callback) {
 // Main loop generating random orders
 
 for (var cycles = 0; cycles < 1000; cycles++) {
-    dummy(cycles, function(response) {
+    orderGenerator(cycles, function(response) {
         console.log("cycles = " + this.cycles + " , response = " + response);
     }.bind({
         cycles: cycles
