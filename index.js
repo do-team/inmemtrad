@@ -50,7 +50,7 @@ function orderGenerator(cycles, callback) {
                     client.rpush(pushBuy, randomCustomer);
                     console.log("New order inserted! " + pushBuy +" " + randomCustomer)
                 } else {
-                    console.log("TRADE DETECTED! " + randomCustomer + " just bought " + redisKey + ", best offer by: " + reply + ". Removing from orderbook.");
+                    console.log("TRADE DETECTED! " + randomCustomer + " just traded " + redisKey + ", best offer by: " + reply + ". Removing from orderbook.");
                     client.lpop(redisKey)
                 }
 
@@ -65,7 +65,7 @@ function orderGenerator(cycles, callback) {
                     client.rpush(pushSell, randomCustomer);
                     console.log("New order inserted! " + pushSell +" " + randomCustomer)
                 } else {
-                    console.log("TRADE DETECTED! " + randomCustomer + " just sold " + redisKey + ", best offer by: " + reply + ". Removing from orderbook.");
+                    console.log("TRADE DETECTED! " + randomCustomer + " just traded " + redisKey + ", best offer by: " + reply + ". Removing from orderbook.");
                     client.lpop(redisKey)
                 }
 
@@ -84,7 +84,5 @@ for (var cycles = 0; cycles < 100; cycles++) {
     }))
 }
 // End of loop
-
-//client.set("zkouska", "test");
 
 client.quit();
