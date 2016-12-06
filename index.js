@@ -72,7 +72,7 @@ function orderGenerator(cycles, callback) {
 
 // Main loop generating random orders
 
-for (var cycles = 0; cycles < 10; cycles++) {
+for (var cycles = 0; cycles < 1000; cycles++) {
     orderGenerator(cycles, function(response) {
         console.log("cycles = " + this.cycles + " , response = " + response);
     }.bind({
