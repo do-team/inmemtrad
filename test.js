@@ -1,56 +1,73 @@
+// inmemtrad redis nodejs async
 var redis = require("redis");
+var async = require("async");
 var connection = process.env.IMTCONNECT;
 
 switch (connection) {
     case "LOCALHOST":
         var client = redis.createClient();
-        console.log('Connecting to localhost...')
         break;
     case "INTERNET":
         var client = redis.createClient(6379, '35.156.118.89'); // This will be parametrized via ENV VAR as well.
-        console.log('Connecting via internet to public port...')
         break;
     case "SOCKET":
         var client = redis.createClient('/tmp/redis.sock');
-        console.log('Connecting to unix socket...')
         break;
     default:
         console.log('Environmental variable IMTCONNECT seems to be not set correctly (LOCALHOST, INTERNET or SOCKET), you will be not able to connect.');
         return;
 }
 
-// if you'd like to select database 3, instead of 0 (default), call client.select(3, function() { /* ... */ });
+// if you'd like to select database 3, instead of 0 (default), call
+// client.select(3, function() { /* ... */ });
+
 client.on("error", function(err) {
-    console.log("Error: " + err);
+    console.log("Error " + err);
 });
+
+// testing function
 
 // List of items
 var products = Array("wood", "gold", "fish", "wine");
 var customers = Array("AUX1", "BFG2", "CRE3", "DRS4", "EFI5", "FRA6", "GOR1", "AAR1");
 var ordertypes = Array("buy", "sell");
 
-// Main function
+// Main loop generating random orders
 
-function orderGenerator(cycles, callback) {
+var cycles;
+for (cycles = 0; cycles < 10; cycles++) {
+    async.waterfall([
+        randomisation,
+        evaluation,
+    ], function(err, result) {
+        console.log(err + result + 'end'); // result now equals 'done'
+    });
 
-    // Randomiser
-    var randomPrice = Math.floor((Math.random() * 98) + 1);
+}
+
+function randomisation(callback) {
+    var randomPrice = Math.floor((Math.random() * 299) + 1);
     var randomProduct = products[Math.floor(Math.random() * products.length)];
     var randomCustomer = customers[Math.floor(Math.random() * customers.length)];
     var randomOrderType = ordertypes[Math.floor(Math.random() * ordertypes.length)];
-    //console.log(randomCustomer + ' ' + randomOrderType + ' ' + randomProduct + ' ' + randomPrice);
+    console.log(randomCustomer + ' ' + randomOrderType + ' ' + randomProduct + ' ' + randomPrice)
+    callback(randomCustomer,randomOrderType,randomProduct,randomPrice);
+}
 
-    // Evaluator
+function evaluation(randomCustomer,randomOrderType,randomProduct,randomPrice) {
+    console.log('something');
     switch (randomOrderType) {
         case "buy":
             var redisKey = randomProduct + "-" + randomPrice + "-sell";
+            console.log(redisKey);
             client.lrange(redisKey, 0, 0, function(err, reply) {
+                //console.log(reply.length + "here");
                 if (reply.length === 0) {
-                    var pushBuy = randomProduct + "-" + randomPrice + "-buy";
-                    client.rpush(pushBuy, randomCustomer);
-                    console.log("New order inserted! " + pushBuy +" " + randomCustomer)
+                    client.rpush(redisKey, randomCustomer);
+                    console.log("New order inserted!" + redisKey, + " " + randomCustomer)
                 } else {
-                    console.log("TRADE DETECTED! " + randomCustomer + " just bought " + redisKey + ", best offer by: " + reply + ". Removing from orderbook.");
+                    console.log("Order exists, best offer by: " + reply);
+                    console.log("We got a trade! Removing best offer...")
                     client.lpop(redisKey)
                 }
 
@@ -60,31 +77,24 @@ function orderGenerator(cycles, callback) {
         case "sell":
             var redisKey = randomProduct + "-" + randomPrice + "-buy";
             client.lrange(redisKey, 0, 0, function(err, reply) {
+
+                //console.log(reply.length + "here");
                 if (reply.length === 0) {
-                    var pushSell = randomProduct + "-" + randomPrice + "-sell";
-                    client.rpush(pushSell, randomCustomer);
-                    console.log("New order inserted! " + pushSell +" " + randomCustomer)
+                    client.rpush(redisKey, randomCustomer);
+                    console.log("New order inserted!" + redisKey, +" " + randomCustomer)
                 } else {
-                    console.log("TRADE DETECTED! " + randomCustomer + " just sold " + redisKey + ", best offer by: " + reply + ". Removing from orderbook.");
+                    console.log("Order exists, best offer by: " + reply);
+                    console.log("We got a trade! Removing best offer...")
                     client.lpop(redisKey)
                 }
 
             });
             break;
+
     }
+    callback();
 }
 
-// Main loop generating random orders
-
-for (var cycles = 0; cycles < 100; cycles++) {
-    orderGenerator(cycles, function(response) {
-        console.log("cycles = " + this.cycles + " , response = " + response);
-    }.bind({
-        cycles: cycles
-    }))
-}
-// End of loop
-
-//client.set("zkouska", "test");
+// End of main loop
 
 client.quit();
