@@ -1,5 +1,6 @@
 // inmemtrad redis nodejs async
 var redis = require("redis");
+var async = require("async");
 var connection = process.env.IMTCONNECT;
 
 switch (connection) {
@@ -35,21 +36,35 @@ var ordertypes = Array("buy", "sell");
 
 var cycles;
 for (cycles = 0; cycles < 10; cycles++) {
+    async.waterfall([
+        randomisation,
+        evaluation,
+    ], function(err, result) {
+        console.log(err + result + 'end'); // result now equals 'done'
+    });
 
+}
+
+function randomisation(callback) {
     var randomPrice = Math.floor((Math.random() * 299) + 1);
     var randomProduct = products[Math.floor(Math.random() * products.length)];
     var randomCustomer = customers[Math.floor(Math.random() * customers.length)];
     var randomOrderType = ordertypes[Math.floor(Math.random() * ordertypes.length)];
+    console.log(randomCustomer + ' ' + randomOrderType + ' ' + randomProduct + ' ' + randomPrice)
+    callback(randomCustomer,randomOrderType,randomProduct,randomPrice);
+}
 
+function evaluation(randomCustomer,randomOrderType,randomProduct,randomPrice) {
+    console.log('something');
     switch (randomOrderType) {
         case "buy":
-
             var redisKey = randomProduct + "-" + randomPrice + "-sell";
+            console.log(redisKey);
             client.lrange(redisKey, 0, 0, function(err, reply) {
-                console.log(reply.length + "here");
+                //console.log(reply.length + "here");
                 if (reply.length === 0) {
                     client.rpush(redisKey, randomCustomer);
-                    console.log("New order inserted!" + redisKey, +" " + randomCustomer)
+                    console.log("New order inserted!" + redisKey, + " " + randomCustomer)
                 } else {
                     console.log("Order exists, best offer by: " + reply);
                     console.log("We got a trade! Removing best offer...")
@@ -63,7 +78,7 @@ for (cycles = 0; cycles < 10; cycles++) {
             var redisKey = randomProduct + "-" + randomPrice + "-buy";
             client.lrange(redisKey, 0, 0, function(err, reply) {
 
-                console.log(reply.length + "here");
+                //console.log(reply.length + "here");
                 if (reply.length === 0) {
                     client.rpush(redisKey, randomCustomer);
                     console.log("New order inserted!" + redisKey, +" " + randomCustomer)
@@ -77,7 +92,7 @@ for (cycles = 0; cycles < 10; cycles++) {
             break;
 
     }
-
+    callback();
 }
 
 // End of main loop
