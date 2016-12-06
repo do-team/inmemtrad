@@ -36,7 +36,7 @@ function orderGenerator(cycles, callback) {
     var randomProduct = products[Math.floor(Math.random() * products.length)];
     var randomCustomer = customers[Math.floor(Math.random() * customers.length)];
     var randomOrderType = ordertypes[Math.floor(Math.random() * ordertypes.length)];
-    //console.log(randomCustomer + ' ' + randomOrderType + ' ' + randomProduct + ' ' + randomPrice);
+    console.log(randomCustomer + ' ' + randomOrderType + ' ' + randomProduct + ' ' + randomPrice);
 
     // Evaluation
     switch (randomOrderType) {
@@ -44,8 +44,9 @@ function orderGenerator(cycles, callback) {
             var redisKey = randomProduct + "-" + randomPrice + "-sell";
             client.lrange(redisKey, 0, 0, function(err, reply) {
                 if (reply.length == 0) {
-                    client.rpush(redisKey, randomCustomer);
-                    console.log("New order inserted! " + redisKey +" " + randomCustomer)
+                    var pushBuy = randomProduct + "-" + randomPrice + "-buy";
+                    client.rpush(pushBuy, randomCustomer);
+                    console.log("New order inserted! " + pushBuy +" " + randomCustomer)
                 } else {
                     console.log("TRADE DETECTED! " + randomCustomer + " just bought " + redisKey + ", best offer by: " + reply + ". Removing from orderbook.");
                     client.lpop(redisKey)
@@ -58,8 +59,9 @@ function orderGenerator(cycles, callback) {
             var redisKey = randomProduct + "-" + randomPrice + "-buy";
             client.lrange(redisKey, 0, 0, function(err, reply) {
                 if (reply.length == 0) {
-                    client.rpush(redisKey, randomCustomer);
-                    console.log("New order inserted! " + redisKey +" " + randomCustomer)
+                    var pushSell = randomProduct + "-" + randomPrice + "-sell";
+                    client.rpush(pushSell, randomCustomer);
+                    console.log("New order inserted! " + pushSell +" " + randomCustomer)
                 } else {
                     console.log("TRADE DETECTED! " + randomCustomer + " just sold " + redisKey + ", best offer by: " + reply + ". Removing from orderbook.");
                     client.lpop(redisKey)
