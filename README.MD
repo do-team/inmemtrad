@@ -1,0 +1,1 @@
+Random order generator, injecting orders directly to Redis database.
