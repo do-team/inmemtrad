@@ -1,6 +1,6 @@
 var redis = require("redis");
 var connection = process.env.IMTCONNECT;
-var maxcycles = 1000;
+var maxcycles = 10;
 
 // Create connection, depending on your environment
 switch (connection) {
@@ -43,7 +43,7 @@ function orderGenerator(cycles, callback) {
         case "buy":
             var redisKey = randomProduct + "-" + randomPrice + "-sell";
             client.lrange(redisKey, 0, 0, function(err, reply) {
-                console.log(reply);
+                //console.log(reply);
                 if (reply.length === 0) {
                     var pushBuy = randomProduct + "-" + randomPrice + "-buy";
                     client.rpush(pushBuy, randomCustomer);
@@ -58,7 +58,7 @@ function orderGenerator(cycles, callback) {
         case "sell":
             var redisKey = randomProduct + "-" + randomPrice + "-buy";
             client.lrange(redisKey, 0, 0, function(err, reply) {
-                console.log(reply);
+                //console.log(reply);
                 if (reply.length === 0) {
                     var pushSell = randomProduct + "-" + randomPrice + "-sell";
                     client.rpush(pushSell, randomCustomer);
@@ -77,7 +77,7 @@ function orderGenerator(cycles, callback) {
 var quitCycles = 0;
 function quitter() {
     ++quitCycles;
-    console.log(quitCycles);
+    //console.log(quitCycles);
     if (quitCycles === maxcycles) client.quit();
 }
 
