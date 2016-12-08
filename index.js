@@ -32,7 +32,7 @@ var customers = Array("AUX1", "BFG2", "CRE3", "DRS4", "EFI5", "FRA6", "GOR1", "A
 var ordertypes = Array("buy", "sell");
 
 // Lambda requires handler being defined:
-exports.handler = orderGenerator;
+exports.handler = orderGenerator();
 
 // Main function
 function orderGenerator(cycles, callback) {
@@ -76,12 +76,15 @@ function orderGenerator(cycles, callback) {
     }
 }
 
-// To ensure proper client.quit at the end of program
+// To ensure proper client.quit and context succeed at the end of program
 var quitCycles = 0;
 function quitter() {
     ++quitCycles;
     //console.log(quitCycles);
-    if (quitCycles === maxcycles) client.quit();
+    if (quitCycles === maxcycles) {
+        client.quit();
+        context.succeed('OK');
+    }
 }
 
 // Main loop generating random orders
