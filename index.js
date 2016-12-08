@@ -31,6 +31,9 @@ var products = Array("wood", "gold", "fish", "wine");
 var customers = Array("AUX1", "BFG2", "CRE3", "DRS4", "EFI5", "FRA6", "GOR1", "AAR1");
 var ordertypes = Array("buy", "sell");
 
+// Lambda requires handler being defined:
+exports.handler = orderGenerator;
+
 // Main function
 function orderGenerator(cycles, callback) {
     // Randomiser
