@@ -5,11 +5,11 @@ var maxcycles = 10;
 // Create connection, depending on your environment
 switch (connection) {
     case "LOCALHOST":
-        var client = redis.createClient();
+        var client = redis.createClient(6379, 'ip-172-31-2-99');
         console.log('Connecting to localhost...')
         break;
     case "INTERNET":
-        var client = redis.createClient(6379, '35.156.118.89'); // This will be parametrized via ENV VAR as well.
+        var client = redis.createClient(6379, '127.0.0.1'); // This will be parametrized via ENV VAR as well.
         console.log('Connecting via internet to public port...')
         break;
     case "SOCKET":
