@@ -1,23 +1,41 @@
 var redis = require("redis");
-var connection = process.env.IMTCONNECT;
 var maxcycles = 10;
 
 // Create connection, depending on your environment
+var connection = process.env.IMTCONNECT;
+if (!connection) {
+connection = 'LOCALHOST';
+}
+
+var dbport = process.env.IMTDBPORT;
+if (!dbport) {
+dbport = 6379;
+}
+
+var dbip = process.env.IMTDBIP;
+if (!dbip) {
+dbip = '127.0.0.1';
+}
+
 switch (connection) {
     case "LOCALHOST":
-        var client = redis.createClient(6379, 'ip-172-31-2-99');
+        var client = redis.createClient();
         console.log('Connecting to localhost...')
         break;
     case "INTERNET":
-        var client = redis.createClient(6379, '127.0.0.1'); // This will be parametrized via ENV VAR as well.
+        var client = redis.createClient(dbport, dbip); // This will be parametrized via ENV VAR as well.
         console.log('Connecting via internet to public port...')
         break;
     case "SOCKET":
         var client = redis.createClient('/tmp/redis.sock');
         console.log('Connecting to unix socket...')
         break;
+    case "DOCKER":
+        var client = redis.createClient(6379, 'redis');
+        console.log('Connecting to Redis container...')
+        break;
     default:
-        console.log('Environmental variable IMTCONNECT seems to be not set correctly (LOCALHOST, INTERNET or SOCKET), you will be not able to connect.');
+        console.log('Environmental variable IMTCONNECT seems to be not set correctly (LOCALHOST, INTERNET, DOCKER or SOCKET), you will be not able to connect.');
         return;
 }
 
