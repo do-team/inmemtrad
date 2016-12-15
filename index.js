@@ -1,20 +1,25 @@
 var redis = require("redis");
-var maxcycles = 10;
+
+// Define amount of cycles
+var maxcycles = process.env.IMTCYCLES;
+if (!maxcycles) {
+    maxcycles = 10;
+}
 
 // Create connection, depending on your environment
 var connection = process.env.IMTCONNECT;
 if (!connection) {
-connection = 'LOCALHOST';
+    connection = 'LOCALHOST';
 }
 
 var dbport = process.env.IMTDBPORT;
 if (!dbport) {
-dbport = 6379;
+    dbport = 6379;
 }
 
 var dbip = process.env.IMTDBIP;
 if (!dbip) {
-dbip = '127.0.0.1';
+    dbip = '127.0.0.1';
 }
 
 switch (connection) {
@@ -96,6 +101,7 @@ function orderGenerator(cycles, callback) {
 
 // To ensure proper client.quit and context succeed at the end of program
 var quitCycles = 0;
+
 function quitter() {
     ++quitCycles;
     //console.log(quitCycles);
